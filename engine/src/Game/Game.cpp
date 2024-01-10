@@ -1,6 +1,7 @@
 #include "Game.h"
 
 #include "../Logger/Logger.h"
+#include "../ECS/ECS.h"
 
 Game::Game() {
 
@@ -49,10 +50,15 @@ void Game::Destroy() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+
+	Logger::Log("Game destroyed!");
 }
 
 void Game::Setup() {
+	manager = std::make_unique<Manager>();
 
+	Entity cat = manager->CreateEntity();
+	Entity dog = manager->CreateEntity();
 }
 
 void Game::Update() {
@@ -62,6 +68,8 @@ void Game::Update() {
 	if (event.type == SDL_QUIT) {
 		isRunning = false;
 	}
+
+	manager->Update();
 }
 
 void Game::Render() {

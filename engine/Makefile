@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -Wall -Wfatal-errors
-SRCFILES = ./src/*.cpp ./src/Game/*.cpp ./src/Logger/*.cpp
+SRCFILES = ./src/*.cpp ./src/Game/*.cpp ./src/Logger/*.cpp ./src/ECS/*.cpp
 LFLAGS = -lSDL2
 EXEC = toxic
 
