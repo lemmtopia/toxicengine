@@ -2,26 +2,19 @@
 
 #include <SDL2/SDL.h>
 
-#include <memory>
-
-#include "../ECS/ECS.h"
-
 class Game {
 	private:
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 		bool isRunning;
-
-		std::unique_ptr<Manager> manager;
+	
 	public:
-		Game();
-		~Game();
+		Game() = default;
+		~Game() = default;
 
 		void Initialize();
-		void Execute();
-		void Destroy();
+		void Run();
 
-		void Setup();
-		void Update();
-		void Render();
+        void Step();
+        void Draw();
 };

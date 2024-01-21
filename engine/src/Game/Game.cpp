@@ -1,82 +1,59 @@
 #include "Game.h"
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_timer.h>
+
 #include "../Logger/Logger.h"
-#include "../ECS/ECS.h"
 
-Game::Game() {
-
-}
-
-Game::~Game() {
-
-}
+int lastFrameTime;
 
 void Game::Initialize() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		Logger::Err("Could not initialize SDL");
-		return;
+        Logger::Err("Could not initialize SDL.\n");
+		return;	
 	}
 
-	window = SDL_CreateWindow("title",
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		640, 480, 0);
-	
-	if (!window) {
-		Logger::Err("Could not create the window");
-		return;
-	}
+    window = SDL_CreateWindow("title",
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            640, 480, 0);
 
-	renderer = SDL_CreateRenderer(window, -1, 0);
+    if (!window) {
+        Logger::Err("Could not create the window.\n");
+		return;	
+    }
 
-	if (!renderer) {
-		Logger::Err("Could not create the renderer");
-		return;
-	}
+    renderer = SDL_CreateRenderer(window, -1, 0);
 
-	Logger::Log("Game initialized!");
-	isRunning = true;
+    if (!renderer) {
+        Logger::Err("Could not create the renderer.\n");
+		return;	
+    }
+
+    isRunning = true;
+    lastFrameTime = SDL_GetTicks();
 }
 
-void Game::Execute() {
-	Setup();
-	while (isRunning) {
-		Update();
-		Render();
-	}
+void Game::Run() {
+    while (isRunning) {
+        Step();
+        Draw();
+    }
 }
 
-void Game::Destroy() {
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
+void Game::Step() {
+    SDL_Event event;
+    SDL_PollEvent(&event);
 
-	Logger::Log("Game destroyed!");
+    if (event.type == SDL_QUIT) {
+        isRunning = false;
+    }
+
+    float deltaTime = (SDL_GetTicks() - lastFrameTime) / 1000.0f;
+    lastFrameTime = SDL_GetTicks();
 }
 
-void Game::Setup() {
-	manager = std::make_unique<Manager>();
-
-	Entity cat = manager->CreateEntity();
-	Entity dog = manager->CreateEntity();
+void Game::Draw() {
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
 }
-
-void Game::Update() {
-	SDL_Event event;
-	SDL_PollEvent(&event);
-
-	if (event.type == SDL_QUIT) {
-		isRunning = false;
-	}
-
-	manager->Update();
-}
-
-void Game::Render() {
-	SDL_RenderClear(renderer);
-
-	// TODO: Implement some drawing function calls
-
-	SDL_RenderPresent(renderer);
-}
-
