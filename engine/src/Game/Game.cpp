@@ -2,10 +2,19 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
+#include <memory>
 
 #include "../Logger/Logger.h"
+#include "../ECS/ECS.h"
+
+#include "../Components/TransformComponent.h"
 
 int lastFrameTime;
+
+Game::Game() {
+    Logger::Log("Game created");
+    registry = std::make_unique<Registry>();
+}
 
 void Game::Initialize() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -35,10 +44,18 @@ void Game::Initialize() {
 }
 
 void Game::Run() {
+	Setup();
     while (isRunning) {
         Step();
         Draw();
     }
+}
+
+void Game::Setup() {
+    Entity entity = registry->CreateEntity();
+    Entity entity2 = registry->CreateEntity();
+
+    registry->AddComponent<TransformComponent>(entity, 20, 20);
 }
 
 void Game::Step() {
